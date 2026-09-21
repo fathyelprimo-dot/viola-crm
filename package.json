@@ -1,5 +1,4 @@
-"scripts": {
-  "homepage": "https://<fathyelprimo-dot>.github.io/viola-crm",
+"scripts": {"homepage": "https://fathyelprimo-dot.github.io/viola-crm",
   "start": "react-scripts start",
   "build": "react-scripts build",
   "test": "react-scripts test",
