@@ -16,6 +16,8 @@ import {
   Receipt,
   LogOut,
   Lock,
+  Menu,
+  X
 } from "lucide-react";
 import { db, auth } from "./firebase";
 import {
@@ -38,6 +40,7 @@ export default function App() {
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // ⚠️⚠️⚠️ اكتب هنا الإيميل بتاعك اللي سجلت بيه كمدير في فايربيز ⚠️⚠️⚠️
   const ADMIN_EMAIL = "viola@elprimo.com";
@@ -288,14 +291,14 @@ export default function App() {
   if (!user) {
     return (
       <div
-        className="flex h-screen bg-[#121212] items-center justify-center relative overflow-hidden"
+        className="flex h-screen bg-[#121212] items-center justify-center relative overflow-hidden px-4"
         dir="rtl"
       >
         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#3A0CA3] rounded-full blur-[120px] opacity-30"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#4CC9F0] rounded-full blur-[120px] opacity-20"></div>
 
-        <div className="glass-panel p-10 rounded-3xl w-full max-w-md z-10 text-center border border-white/10 shadow-2xl">
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4CC9F0] to-[#7209B7] mb-2">
+        <div className="glass-panel p-8 md:p-10 rounded-3xl w-full max-w-md z-10 text-center border border-white/10 shadow-2xl">
+          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4CC9F0] to-[#7209B7] mb-2">
             VIOLA ELPRIMO
           </h1>
           <p className="text-gray-400 mb-8 text-sm">
@@ -361,14 +364,29 @@ export default function App() {
       </div>
     );
 
+  const switchTab = (tab) => {
+    setActiveTab(tab);
+    setIsMobileMenuOpen(false);
+  }
+
   return (
     <div
-      className="flex h-screen bg-[#121212] text-white overflow-hidden"
+      className="flex flex-col md:flex-row min-h-screen bg-[#121212] text-white overflow-hidden"
       dir="rtl"
     >
-      {/* القائمة الجانبية */}
-      <aside className="w-64 glass-panel flex flex-col p-6 h-full z-10 relative border-l border-white/10">
-        <div className="mb-8 text-center">
+      {/* هيدر الموبايل */}
+      <div className="md:hidden flex justify-between items-center p-4 glass-panel z-20 border-b border-white/10 relative">
+          <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4CC9F0] to-[#7209B7]">
+            VIOLA ELPRIMO
+          </h1>
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-2">
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+      </div>
+
+      {/* القائمة الجانبية (متجاوبة) */}
+      <aside className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex w-full md:w-64 glass-panel flex-col p-6 h-auto md:h-full z-10 relative border-b md:border-b-0 md:border-l border-white/10 absolute md:static top-full left-0 right-0 bg-[#121212] md:bg-transparent shadow-2xl md:shadow-none`}>
+        <div className="hidden md:block mb-8 text-center">
           <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4CC9F0] to-[#7209B7]">
             VIOLA ELPRIMO
           </h1>
@@ -381,7 +399,7 @@ export default function App() {
         <nav className="flex flex-col space-y-3 flex-1">
           {isAdmin && (
             <button
-              onClick={() => setActiveTab("dashboard")}
+              onClick={() => switchTab("dashboard")}
               className={`flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all ${
                 activeTab === "dashboard"
                   ? "bg-[#3A0CA3] shadow-lg"
@@ -392,7 +410,7 @@ export default function App() {
             </button>
           )}
           <button
-            onClick={() => setActiveTab("clients")}
+            onClick={() => switchTab("clients")}
             className={`flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all ${
               activeTab === "clients"
                 ? "bg-[#3A0CA3] shadow-lg"
@@ -403,7 +421,7 @@ export default function App() {
           </button>
           {isAdmin && (
             <button
-              onClick={() => setActiveTab("expenses")}
+              onClick={() => switchTab("expenses")}
               className={`flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all ${
                 activeTab === "expenses"
                   ? "bg-[#3A0CA3] shadow-lg"
@@ -414,7 +432,7 @@ export default function App() {
             </button>
           )}
           <button
-            onClick={() => setActiveTab("services")}
+            onClick={() => switchTab("services")}
             className={`flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all ${
               activeTab === "services"
                 ? "bg-[#3A0CA3] shadow-lg"
@@ -427,51 +445,51 @@ export default function App() {
 
         <button
           onClick={handleLogout}
-          className="flex items-center justify-center space-x-2 space-x-reverse p-3 mt-4 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition-all"
+          className="flex items-center justify-center space-x-2 space-x-reverse p-3 mt-4 mb-2 md:mb-0 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition-all w-full"
         >
           <LogOut size={18} /> <span>تسجيل الخروج</span>
         </button>
       </aside>
 
       {/* المحتوى الرئيسي */}
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full max-w-full">
         {/* ================= لوحة التحكم (للأدمن فقط) ================= */}
         {activeTab === "dashboard" && isAdmin && (
-          <div className="animate-fade-in">
-            <h2 className="text-3xl font-bold mb-8 text-white">
+          <div className="animate-fade-in w-full">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-white">
               نظرة عامة والجرد
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="glass-panel p-6 rounded-2xl border-t-4 border-t-[#4CC9F0]">
-                <p className="text-gray-400 mb-2">حجم العمل (بعد الخصومات)</p>
-                <h3 className="text-3xl font-bold">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+              <div className="glass-panel p-5 md:p-6 rounded-2xl border-t-4 border-t-[#4CC9F0]">
+                <p className="text-sm md:text-base text-gray-400 mb-2">حجم العمل (بعد الخصومات)</p>
+                <h3 className="text-2xl md:text-3xl font-bold break-words">
                   {totalRevenue.toLocaleString()} ج.م
                 </h3>
               </div>
-              <div className="glass-panel p-6 rounded-2xl border-t-4 border-t-[#90BE6D]">
-                <p className="text-gray-400 mb-2">الإيرادات المحصلة (الدخل)</p>
-                <h3 className="text-3xl font-bold text-[#90BE6D]">
+              <div className="glass-panel p-5 md:p-6 rounded-2xl border-t-4 border-t-[#90BE6D]">
+                <p className="text-sm md:text-base text-gray-400 mb-2">الإيرادات المحصلة (الدخل)</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-[#90BE6D] break-words">
                   {totalPaid.toLocaleString()} ج.م
                 </h3>
               </div>
-              <div className="glass-panel p-6 rounded-2xl border-t-4 border-t-[#F94144]">
-                <p className="text-gray-400 mb-2">إجمالي المصروفات (الخرج)</p>
-                <h3 className="text-3xl font-bold text-[#F94144]">
+              <div className="glass-panel p-5 md:p-6 rounded-2xl border-t-4 border-t-[#F94144]">
+                <p className="text-sm md:text-base text-gray-400 mb-2">إجمالي المصروفات (الخرج)</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-[#F94144] break-words">
                   {totalExpenses.toLocaleString()} ج.م
                 </h3>
               </div>
-              <div className="glass-panel p-6 rounded-2xl border-t-4 border-t-[#7209B7]">
-                <p className="text-gray-400 mb-2">صافي الربح الفعلي</p>
-                <h3 className="text-3xl font-bold text-[#7209B7]">
+              <div className="glass-panel p-5 md:p-6 rounded-2xl border-t-4 border-t-[#7209B7]">
+                <p className="text-sm md:text-base text-gray-400 mb-2">صافي الربح الفعلي</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-[#7209B7] break-words">
                   {netProfit.toLocaleString()} ج.م
                 </h3>
               </div>
             </div>
-            <div className="glass-panel p-6 rounded-2xl border-r-4 border-r-yellow-500 w-full md:w-1/3">
-              <p className="text-gray-400 mb-2">
+            <div className="glass-panel p-5 md:p-6 rounded-2xl border-r-4 border-r-yellow-500 w-full md:w-1/3">
+              <p className="text-sm md:text-base text-gray-400 mb-2">
                 فلوس برة (المتبقي عند العملاء)
               </p>
-              <h3 className="text-2xl font-bold text-yellow-500">
+              <h3 className="text-xl md:text-2xl font-bold text-yellow-500 break-words">
                 {totalRemaining.toLocaleString()} ج.م
               </h3>
             </div>
@@ -480,10 +498,10 @@ export default function App() {
 
         {/* ================= العملاء (للجميع) ================= */}
         {activeTab === "clients" && (
-          <div className="animate-fade-in">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold">العملاء والمشاريع</h2>
-              <div className="relative w-64">
+          <div className="animate-fade-in w-full">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+              <h2 className="text-2xl md:text-3xl font-bold">العملاء والمشاريع</h2>
+              <div className="relative w-full md:w-64">
                 <input
                   type="text"
                   placeholder="ابحث عن عميل..."
@@ -499,24 +517,24 @@ export default function App() {
             </div>
 
             {/* فورم إضافة عميل */}
-            <div className="glass-panel p-8 rounded-2xl mb-8 relative overflow-hidden">
+            <div className="glass-panel p-5 md:p-8 rounded-2xl mb-6 md:mb-8 relative overflow-hidden">
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#4CC9F0] rounded-full blur-[90px] opacity-20 pointer-events-none"></div>
-              <h3 className="text-2xl font-bold mb-6 flex items-center text-[#4CC9F0]">
-                <UserPlus size={24} className="ml-2" /> تسجيل مشروع أو عميل جديد
+              <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 flex items-center text-[#4CC9F0]">
+                <UserPlus size={20} className="ml-2 md:w-6 md:h-6" /> تسجيل مشروع أو عميل جديد
               </h3>
               <form
                 onSubmit={handleAddClient}
-                className="space-y-6 relative z-10"
+                className="space-y-4 md:space-y-6 relative z-10 w-full"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm text-gray-300 mb-1 md:mb-2">
                       اسم العميل أو المشروع{" "}
                       <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="text"
-                      className="w-full glass-input p-3 rounded-xl focus:border-[#4CC9F0]"
+                      className="w-full glass-input p-2.5 md:p-3 rounded-xl focus:border-[#4CC9F0]"
                       value={newClient.name}
                       onChange={(e) =>
                         setNewClient({ ...newClient, name: e.target.value })
@@ -525,12 +543,12 @@ export default function App() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm text-gray-300 mb-1 md:mb-2">
                       رقم الواتساب
                     </label>
                     <input
                       type="text"
-                      className="w-full glass-input p-3 rounded-xl text-left"
+                      className="w-full glass-input p-2.5 md:p-3 rounded-xl text-left"
                       dir="ltr"
                       value={newClient.phone}
                       onChange={(e) =>
@@ -540,12 +558,12 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="bg-white/5 p-5 rounded-xl border border-white/10">
-                  <label className="block text-sm text-[#4CC9F0] font-bold mb-3">
+                <div className="bg-white/5 p-4 md:p-5 rounded-xl border border-white/10">
+                  <label className="block text-xs md:text-sm text-[#4CC9F0] font-bold mb-2 md:mb-3">
                     الخدمات المطلوبة (تُضاف للإجمالي تلقائياً)
                   </label>
                   <select
-                    className="w-full glass-input p-3 rounded-xl text-white bg-[#121212] cursor-pointer"
+                    className="w-full glass-input p-2.5 md:p-3 rounded-xl text-white bg-[#121212] cursor-pointer text-sm md:text-base"
                     value=""
                     onChange={(e) => {
                       const srv = services.find((s) => s.id === e.target.value);
@@ -575,14 +593,14 @@ export default function App() {
                   </select>
                   {newClient.selectedServices &&
                     newClient.selectedServices.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-4">
+                      <div className="flex flex-wrap gap-2 mt-3 md:mt-4">
                         {newClient.selectedServices.map((s, idx) => (
                           <span
                             key={idx}
-                            className="bg-[#3A0CA3]/40 border border-[#7209B7] px-4 py-2 rounded-lg text-sm flex items-center shadow-lg text-white"
+                            className="bg-[#3A0CA3]/40 border border-[#7209B7] px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm flex items-center shadow-lg text-white"
                           >
                             {s.name}{" "}
-                            <span className="text-[#4CC9F0] font-bold mx-2">
+                            <span className="text-[#4CC9F0] font-bold mx-1 md:mx-2">
                               ({s.price} ج)
                             </span>
                             <button
@@ -612,14 +630,14 @@ export default function App() {
                     )}
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
                   <div>
-                    <label className="block text-sm text-[#4CC9F0] font-bold mb-2">
+                    <label className="block text-xs md:text-sm text-[#4CC9F0] font-bold mb-1 md:mb-2">
                       السعر الأساسي <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="number"
-                      className="w-full glass-input p-3 rounded-xl font-bold text-white"
+                      className="w-full glass-input p-2.5 md:p-3 rounded-xl font-bold text-white text-sm md:text-base"
                       value={newClient.subtotal}
                       onChange={(e) =>
                         setNewClient({ ...newClient, subtotal: e.target.value })
@@ -628,12 +646,12 @@ export default function App() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-yellow-400 mb-2">
+                    <label className="block text-xs md:text-sm text-yellow-400 mb-1 md:mb-2">
                       الخصم
                     </label>
                     <input
                       type="number"
-                      className="w-full glass-input p-3 rounded-xl text-yellow-400"
+                      className="w-full glass-input p-2.5 md:p-3 rounded-xl text-yellow-400 text-sm md:text-base"
                       value={newClient.discount}
                       onChange={(e) =>
                         setNewClient({ ...newClient, discount: e.target.value })
@@ -641,12 +659,12 @@ export default function App() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-300 mb-2">
+                    <label className="block text-xs md:text-sm text-gray-300 mb-1 md:mb-2">
                       المبلغ المدفوع
                     </label>
                     <input
                       type="number"
-                      className="w-full glass-input p-3 rounded-xl text-[#90BE6D]"
+                      className="w-full glass-input p-2.5 md:p-3 rounded-xl text-[#90BE6D] text-sm md:text-base"
                       value={newClient.paid}
                       onChange={(e) =>
                         setNewClient({ ...newClient, paid: e.target.value })
@@ -654,19 +672,19 @@ export default function App() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-[#90BE6D] font-bold mb-2">
+                    <label className="block text-xs md:text-sm text-[#90BE6D] font-bold mb-1 md:mb-2 whitespace-nowrap">
                       الإجمالي النهائي
                     </label>
-                    <div className="w-full p-3 rounded-xl bg-[#90BE6D]/10 text-[#90BE6D] font-bold text-center border border-[#90BE6D]/30 min-h-[52px] flex items-center justify-center">
+                    <div className="w-full p-2.5 md:p-3 rounded-xl bg-[#90BE6D]/10 text-[#90BE6D] font-bold text-center border border-[#90BE6D]/30 min-h-[44px] md:min-h-[52px] flex items-center justify-center text-sm md:text-base">
                       {Number(newClient.subtotal || 0) -
                         Number(newClient.discount || 0)}{" "}
-                      ج.م
+                      ج
                     </div>
                   </div>
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-[#4CC9F0] to-[#3A0CA3] text-white font-bold py-4 rounded-xl shadow-lg hover:opacity-90 transition-opacity"
+                  className="w-full bg-gradient-to-r from-[#4CC9F0] to-[#3A0CA3] text-white font-bold py-3 md:py-4 rounded-xl shadow-lg hover:opacity-90 transition-opacity text-sm md:text-base"
                 >
                   تأكيد وتسجيل العميل
                 </button>
@@ -675,13 +693,13 @@ export default function App() {
 
             {/* تعديل العميل - للأدمن فقط */}
             {editingClient && isAdmin && (
-              <div className="glass-panel p-6 rounded-2xl mb-8 border border-[#4CC9F0]">
-                <h3 className="text-xl font-bold mb-4 text-[#4CC9F0]">
+              <div className="glass-panel p-4 md:p-6 rounded-2xl mb-6 md:mb-8 border border-[#4CC9F0] w-full">
+                <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-[#4CC9F0]">
                   تعديل حساب العميل
                 </h3>
                 <form
                   onSubmit={handleUpdateClient}
-                  className="grid grid-cols-1 md:grid-cols-5 gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4"
                 >
                   <input
                     type="text"
@@ -693,7 +711,7 @@ export default function App() {
                         name: e.target.value,
                       })
                     }
-                    className="glass-input p-3 rounded-lg"
+                    className="glass-input p-2.5 md:p-3 rounded-lg text-sm"
                     required
                   />
                   <input
@@ -706,7 +724,7 @@ export default function App() {
                         subtotal: e.target.value,
                       })
                     }
-                    className="glass-input p-3 rounded-lg"
+                    className="glass-input p-2.5 md:p-3 rounded-lg text-sm"
                     required
                   />
                   <input
@@ -719,7 +737,7 @@ export default function App() {
                         discount: e.target.value,
                       })
                     }
-                    className="glass-input p-3 rounded-lg"
+                    className="glass-input p-2.5 md:p-3 rounded-lg text-sm"
                   />
                   <input
                     type="number"
@@ -731,20 +749,20 @@ export default function App() {
                         paid: e.target.value,
                       })
                     }
-                    className="glass-input p-3 rounded-lg"
+                    className="glass-input p-2.5 md:p-3 rounded-lg text-sm"
                     required
                   />
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 sm:col-span-2 md:col-span-1">
                     <button
                       type="submit"
-                      className="bg-[#4CC9F0] text-black font-bold py-3 px-2 rounded-lg flex-1"
+                      className="bg-[#4CC9F0] text-black font-bold py-2.5 md:py-3 px-2 rounded-lg flex-1 text-sm"
                     >
                       حفظ
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditingClient(null)}
-                      className="bg-red-500/20 text-red-400 py-3 px-2 rounded-lg"
+                      className="bg-red-500/20 text-red-400 py-2.5 md:py-3 px-2 rounded-lg text-sm"
                     >
                       إلغاء
                     </button>
@@ -753,128 +771,130 @@ export default function App() {
               </div>
             )}
 
-            {/* جدول العملاء */}
-            <div className="glass-panel rounded-2xl overflow-hidden overflow-x-auto">
-              <table className="w-full text-right min-w-[800px]">
-                <thead className="bg-white/5 border-b border-white/10">
-                  <tr>
-                    <th className="p-4 font-semibold text-gray-300">
-                      الاسم / المشروع
-                    </th>
-                    <th className="p-4 font-semibold text-gray-300">
-                      السعر الأساسي
-                    </th>
-                    <th className="p-4 font-semibold text-gray-300">الخصم</th>
-                    <th className="p-4 font-semibold text-gray-300">النهائي</th>
-                    <th className="p-4 font-semibold text-gray-300">المدفوع</th>
-                    <th className="p-4 font-semibold text-gray-300">المتبقي</th>
-                    {isAdmin && (
-                      <th className="p-4 font-semibold text-gray-300">
-                        الموظف
-                      </th>
-                    )}
-                    <th className="p-4 font-semibold text-gray-300 text-center">
-                      إجراءات
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredClients.map((client) => (
-                    <tr
-                      key={client.id}
-                      className="border-b border-white/5 hover:bg-white/5"
-                    >
-                      <td className="p-4">
-                        <div className="font-bold">{client.name}</div>
-                        {client.servicesList && (
-                          <div className="text-[10px] text-[#4CC9F0] mt-1 flex gap-1 flex-wrap">
-                            {client.servicesList.map((s, i) => (
-                              <span
-                                key={i}
-                                className="bg-white/5 border border-white/10 px-2 py-0.5 rounded"
-                              >
-                                {s.name}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </td>
-                      <td className="p-4 text-gray-400 line-through">
-                        {(client.subtotal || 0).toLocaleString()}
-                      </td>
-                      <td className="p-4 text-yellow-400">
-                        {(client.discount || 0).toLocaleString()}
-                      </td>
-                      <td className="p-4 font-bold text-white">
-                        {(client.total || 0).toLocaleString()}
-                      </td>
-                      <td className="p-4 text-[#90BE6D] font-bold">
-                        {(client.paid || 0).toLocaleString()}
-                      </td>
-                      <td className="p-4 text-[#F94144] font-bold">
-                        {(client.total - (client.paid || 0)).toLocaleString()}
-                      </td>
-                      {isAdmin && (
-                        <td className="p-4 text-xs text-gray-400">
-                          {client.addedBy || "المدير"}
-                        </td>
-                      )}
-                      <td className="p-4 flex gap-2 justify-center">
-                        {client.phone && (
-                          <a
-                            href={`https://wa.me/20${
-                              client.phone
-                            }?text=مرحباً ${
-                              client.name
-                            }، متبقي لحساب شركة Viola Elprimo مبلغ وقدره ${
-                              client.total - client.paid
-                            } ج.م`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="p-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/40"
-                            title="إرسال واتساب"
-                          >
-                            <MessageCircle size={16} />
-                          </a>
-                        )}
+            {/* جدول العملاء - متجاوب بالتمرير الأفقي */}
+            <div className="glass-panel rounded-2xl overflow-hidden w-full">
+               <div className="overflow-x-auto w-full">
+                  <table className="w-full text-right min-w-[700px] md:min-w-[800px]">
+                    <thead className="bg-white/5 border-b border-white/10">
+                      <tr>
+                        <th className="p-3 md:p-4 font-semibold text-gray-300 text-sm md:text-base">
+                          الاسم / المشروع
+                        </th>
+                        <th className="p-3 md:p-4 font-semibold text-gray-300 text-sm md:text-base">
+                          الأساسي
+                        </th>
+                        <th className="p-3 md:p-4 font-semibold text-gray-300 text-sm md:text-base">الخصم</th>
+                        <th className="p-3 md:p-4 font-semibold text-gray-300 text-sm md:text-base">النهائي</th>
+                        <th className="p-3 md:p-4 font-semibold text-gray-300 text-sm md:text-base">المدفوع</th>
+                        <th className="p-3 md:p-4 font-semibold text-gray-300 text-sm md:text-base">المتبقي</th>
                         {isAdmin && (
-                          <>
-                            <button
-                              onClick={() => setEditingClient(client)}
-                              className="p-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/40"
-                            >
-                              <Edit size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClient(client.id)}
-                              className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/40"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </>
+                          <th className="p-3 md:p-4 font-semibold text-gray-300 text-sm md:text-base">
+                            الموظف
+                          </th>
                         )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        <th className="p-3 md:p-4 font-semibold text-gray-300 text-center text-sm md:text-base">
+                          إجراءات
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredClients.map((client) => (
+                        <tr
+                          key={client.id}
+                          className="border-b border-white/5 hover:bg-white/5"
+                        >
+                          <td className="p-3 md:p-4">
+                            <div className="font-bold text-sm md:text-base whitespace-nowrap">{client.name}</div>
+                            {client.servicesList && (
+                              <div className="text-[9px] md:text-[10px] text-[#4CC9F0] mt-1 flex gap-1 flex-wrap">
+                                {client.servicesList.map((s, i) => (
+                                  <span
+                                    key={i}
+                                    className="bg-white/5 border border-white/10 px-1.5 md:px-2 py-0.5 rounded whitespace-nowrap"
+                                  >
+                                    {s.name}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-3 md:p-4 text-gray-400 line-through text-xs md:text-sm whitespace-nowrap">
+                            {(client.subtotal || 0).toLocaleString()}
+                          </td>
+                          <td className="p-3 md:p-4 text-yellow-400 text-xs md:text-sm whitespace-nowrap">
+                            {(client.discount || 0).toLocaleString()}
+                          </td>
+                          <td className="p-3 md:p-4 font-bold text-white text-xs md:text-sm whitespace-nowrap">
+                            {(client.total || 0).toLocaleString()}
+                          </td>
+                          <td className="p-3 md:p-4 text-[#90BE6D] font-bold text-xs md:text-sm whitespace-nowrap">
+                            {(client.paid || 0).toLocaleString()}
+                          </td>
+                          <td className="p-3 md:p-4 text-[#F94144] font-bold text-xs md:text-sm whitespace-nowrap">
+                            {(client.total - (client.paid || 0)).toLocaleString()}
+                          </td>
+                          {isAdmin && (
+                            <td className="p-3 md:p-4 text-[10px] md:text-xs text-gray-400 whitespace-nowrap">
+                              {client.addedBy || "المدير"}
+                            </td>
+                          )}
+                          <td className="p-3 md:p-4 flex gap-1 md:gap-2 justify-center">
+                            {client.phone && (
+                              <a
+                                href={`https://wa.me/20${
+                                  client.phone
+                                }?text=مرحباً ${
+                                  client.name
+                                }، متبقي لحساب شركة Viola Elprimo مبلغ وقدره ${
+                                  client.total - client.paid
+                                } ج.م`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-1.5 md:p-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/40"
+                                title="إرسال واتساب"
+                              >
+                                <MessageCircle size={14} className="md:w-4 md:h-4" />
+                              </a>
+                            )}
+                            {isAdmin && (
+                              <>
+                                <button
+                                  onClick={() => setEditingClient(client)}
+                                  className="p-1.5 md:p-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/40"
+                                >
+                                  <Edit size={14} className="md:w-4 md:h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteClient(client.id)}
+                                  className="p-1.5 md:p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/40"
+                                >
+                                  <Trash2 size={14} className="md:w-4 md:h-4" />
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+               </div>
             </div>
           </div>
         )}
 
         {/* ================= المصروفات (للأدمن فقط) ================= */}
         {activeTab === "expenses" && isAdmin && (
-          <div className="animate-fade-in">
-            <h2 className="text-3xl font-bold mb-8">الجرد والمصروفات</h2>
-            <div className="glass-panel p-6 rounded-2xl mb-8">
+          <div className="animate-fade-in w-full">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">الجرد والمصروفات</h2>
+            <div className="glass-panel p-5 md:p-6 rounded-2xl mb-6 md:mb-8 w-full">
               <form
                 onSubmit={handleAddExpense}
-                className="grid grid-cols-1 md:grid-cols-4 gap-4"
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
               >
                 <input
                   type="text"
                   placeholder="بند الصرف (مثال: إعلانات، رواتب)"
-                  className="glass-input p-3 rounded-xl focus:border-[#F94144]"
+                  className="glass-input p-2.5 md:p-3 rounded-xl focus:border-[#F94144] text-sm md:text-base"
                   value={newExpense.title}
                   onChange={(e) =>
                     setNewExpense({ ...newExpense, title: e.target.value })
@@ -884,7 +904,7 @@ export default function App() {
                 <input
                   type="number"
                   placeholder="المبلغ"
-                  className="glass-input p-3 rounded-xl focus:border-[#F94144]"
+                  className="glass-input p-2.5 md:p-3 rounded-xl focus:border-[#F94144] text-sm md:text-base"
                   value={newExpense.amount}
                   onChange={(e) =>
                     setNewExpense({ ...newExpense, amount: e.target.value })
@@ -893,7 +913,7 @@ export default function App() {
                 />
                 <input
                   type="date"
-                  className="glass-input p-3 rounded-xl text-gray-400"
+                  className="glass-input p-2.5 md:p-3 rounded-xl text-gray-400 text-sm md:text-base"
                   value={newExpense.date}
                   onChange={(e) =>
                     setNewExpense({ ...newExpense, date: e.target.value })
@@ -901,32 +921,32 @@ export default function App() {
                 />
                 <button
                   type="submit"
-                  className="bg-[#F94144] hover:bg-[#d63638] text-white font-bold py-3 px-4 rounded-xl shadow-lg"
+                  className="bg-[#F94144] hover:bg-[#d63638] text-white font-bold py-2.5 md:py-3 px-4 rounded-xl shadow-lg sm:col-span-2 md:col-span-1 text-sm md:text-base"
                 >
                   تسجيل المصروف
                 </button>
               </form>
             </div>
-            <div className="glass-panel rounded-2xl p-6">
+            <div className="glass-panel rounded-2xl p-4 md:p-6 w-full">
               <ul className="space-y-3">
                 {expenses.map((expense) => (
                   <li
                     key={expense.id}
-                    className="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5"
+                    className="flex justify-between items-center bg-white/5 p-3 md:p-4 rounded-xl border border-white/5"
                   >
                     <div>
-                      <p className="font-bold text-lg">{expense.title}</p>
-                      <p className="text-sm text-gray-400">{expense.date}</p>
+                      <p className="font-bold text-base md:text-lg">{expense.title}</p>
+                      <p className="text-xs md:text-sm text-gray-400">{expense.date}</p>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <p className="text-xl font-bold text-[#F94144]">
-                        {expense.amount.toLocaleString()} ج.م
+                    <div className="flex items-center gap-3 md:gap-4">
+                      <p className="text-lg md:text-xl font-bold text-[#F94144] whitespace-nowrap">
+                        {expense.amount.toLocaleString()} ج
                       </p>
                       <button
                         onClick={() => handleDeleteExpense(expense.id)}
-                        className="text-red-400 p-2 hover:bg-red-400/10 rounded-lg"
+                        className="text-red-400 p-1.5 md:p-2 hover:bg-red-400/10 rounded-lg"
                       >
-                        <Trash2 size={18} />
+                        <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
                       </button>
                     </div>
                   </li>
@@ -938,20 +958,20 @@ export default function App() {
 
         {/* ================= الخدمات (الكل يشوفها، التعديل للأدمن بس) ================= */}
         {activeTab === "services" && (
-          <div className="animate-fade-in">
-            <h2 className="text-3xl font-bold mb-8">الخدمات والأسعار</h2>
+          <div className="animate-fade-in w-full">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">الخدمات والأسعار</h2>
 
             {/* فورم الإضافة يظهر للأدمن فقط */}
             {isAdmin && (
-              <div className="glass-panel p-6 rounded-2xl mb-8">
+              <div className="glass-panel p-5 md:p-6 rounded-2xl mb-6 md:mb-8 w-full">
                 <form
                   onSubmit={handleAddService}
-                  className="grid grid-cols-1 md:grid-cols-4 gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
                 >
                   <input
                     type="text"
                     placeholder="اسم الخدمة"
-                    className="glass-input p-3 rounded-xl focus:border-[#3A0CA3]"
+                    className="glass-input p-2.5 md:p-3 rounded-xl focus:border-[#3A0CA3] text-sm md:text-base"
                     value={newService.name}
                     onChange={(e) =>
                       setNewService({ ...newService, name: e.target.value })
@@ -959,7 +979,7 @@ export default function App() {
                     required
                   />
                   <select
-                    className="glass-input p-3 rounded-xl text-white bg-[#121212] focus:border-[#3A0CA3]"
+                    className="glass-input p-2.5 md:p-3 rounded-xl text-white bg-[#121212] focus:border-[#3A0CA3] text-sm md:text-base"
                     value={newService.category}
                     onChange={(e) =>
                       setNewService({ ...newService, category: e.target.value })
@@ -975,7 +995,7 @@ export default function App() {
                   <input
                     type="number"
                     placeholder="السعر"
-                    className="glass-input p-3 rounded-xl focus:border-[#3A0CA3]"
+                    className="glass-input p-2.5 md:p-3 rounded-xl focus:border-[#3A0CA3] text-sm md:text-base"
                     value={newService.price}
                     onChange={(e) =>
                       setNewService({ ...newService, price: e.target.value })
@@ -984,7 +1004,7 @@ export default function App() {
                   />
                   <button
                     type="submit"
-                    className="bg-[#3A0CA3] hover:bg-[#7209B7] text-white font-bold py-3 px-4 rounded-xl shadow-lg"
+                    className="bg-[#3A0CA3] hover:bg-[#7209B7] text-white font-bold py-2.5 md:py-3 px-4 rounded-xl shadow-lg sm:col-span-2 md:col-span-1 text-sm md:text-base"
                   >
                     إضافة للقائمة
                   </button>
@@ -992,7 +1012,7 @@ export default function App() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full">
               {["تصميم", "سوشيال", "محتوى", "فيديو", "إعلانات", "أخرى"].map(
                 (cat) => {
                   const catServices = services.filter(
@@ -1002,22 +1022,22 @@ export default function App() {
                   return (
                     <div
                       key={cat}
-                      className="glass-panel p-6 rounded-2xl border border-white/5"
+                      className="glass-panel p-4 md:p-6 rounded-2xl border border-white/5"
                     >
-                      <h4 className="text-lg font-bold mb-4 text-[#4CC9F0] border-b border-white/10 pb-2">
+                      <h4 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-[#4CC9F0] border-b border-white/10 pb-2">
                         {cat}
                       </h4>
-                      <ul className="space-y-3">
+                      <ul className="space-y-2 md:space-y-3">
                         {catServices.map((service) => (
                           <li
                             key={service.id}
-                            className="flex justify-between items-center bg-[#121212]/50 p-3 rounded-xl border border-white/5"
+                            className="flex justify-between items-center bg-[#121212]/50 p-2.5 md:p-3 rounded-xl border border-white/5"
                           >
-                            <div>
-                              <p className="font-semibold text-white">
+                            <div className="flex-1 pr-2">
+                              <p className="font-semibold text-white text-sm md:text-base truncate">
                                 {service.name}
                               </p>
-                              <p className="text-sm text-[#90BE6D] font-bold">
+                              <p className="text-xs md:text-sm text-[#90BE6D] font-bold mt-0.5">
                                 {service.price.toLocaleString()} ج.م
                               </p>
                             </div>
@@ -1025,9 +1045,9 @@ export default function App() {
                             {isAdmin && (
                               <button
                                 onClick={() => handleDeleteService(service.id)}
-                                className="text-red-400 p-2 hover:bg-red-400/10 rounded-lg transition"
+                                className="text-red-400 p-1.5 md:p-2 hover:bg-red-400/10 rounded-lg transition shrink-0"
                               >
-                                <Trash2 size={18} />
+                                <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
                               </button>
                             )}
                           </li>
