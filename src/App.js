@@ -55,7 +55,7 @@ export default function App() {
 
   const [newService, setNewService] = useState({
     name: "",
-    category: "تصميم",
+    category: "سوشيال",
     price: "",
   });
   const [newClient, setNewClient] = useState({
@@ -72,6 +72,102 @@ export default function App() {
     date: "",
   });
   const [editingClient, setEditingClient] = useState(null);
+
+  // قائمة أسعار Viola Elprimo كاملة للرفع بضغطة واحدة
+  const bulkServicesList = [
+    // سوشيال ميديا
+    { name: "تصميم بوست سوشيال ميديا", category: "سوشيال", price: 250 },
+    { name: "تصميم كاروسيل", category: "سوشيال", price: 400 },
+    { name: "تصميم إنفوجرافيك", category: "سوشيال", price: 350 },
+    { name: "تصميم ستوري", category: "سوشيال", price: 200 },
+    { name: "تصميم غلاف", category: "سوشيال", price: 300 },
+    { name: "تصميم إعلان ممول", category: "سوشيال", price: 400 },
+    { name: "تصميم عروض وخصومات", category: "سوشيال", price: 250 },
+    { name: "تصميم محتوى تعليمي", category: "سوشيال", price: 250 },
+    { name: "تصميم غلاف ريلز", category: "سوشيال", price: 150 },
+    { name: "تصميم صورة مصغرة", category: "سوشيال", price: 200 },
+    { name: "تصميم بوستات المناسبات والأعياد", category: "سوشيال", price: 200 },
+    // المونتاج والفيديو
+    { name: "مونتاج ريلز", category: "فيديو", price: 250 },
+    { name: "مونتاج فيديو طويل (للدقيقة)", category: "فيديو", price: 50 },
+    { name: "مونتاج فيديو تعليمي", category: "فيديو", price: 300 },
+    { name: "مونتاج إعلان فيديو", category: "فيديو", price: 500 },
+    { name: "مونتاج فيديوهات للسوشيال ميديا", category: "فيديو", price: 300 },
+    { name: "تصحيح ألوان الفيديو", category: "فيديو", price: 150 },
+    { name: "تصميم ومعالجة الصوت", category: "فيديو", price: 250 },
+    { name: "صناعة محتوى قصير", category: "فيديو", price: 300 },
+    { name: "تحويل فيديو طويل إلى ريلز", category: "فيديو", price: 250 },
+    // كتابة وصناعة المحتوى
+    { name: "كتابة محتوى", category: "محتوى", price: 150 },
+    { name: "كتابة وصف للمنشور", category: "محتوى", price: 50 },
+    { name: "كتابة محتوى إعلاني", category: "محتوى", price: 200 },
+    { name: "أفكار ريلز", category: "محتوى", price: 150 },
+    { name: "أفكار منشورات", category: "محتوى", price: 150 },
+    { name: "خطة محتوى شهرية", category: "محتوى", price: 1500 },
+    { name: "استراتيجية المحتوى", category: "محتوى", price: 1500 },
+    { name: "الأفكار الإبداعية للحملات والمحتوى", category: "محتوى", price: 1000 },
+    { name: "كتابة الأفكار والخطافات الإعلانية", category: "محتوى", price: 1000 },
+    { name: "كتابة سيناريو ريلز", category: "محتوى", price: 200 },
+    // التسويق والاستراتيجيات
+    { name: "استراتيجية تسويقية", category: "تسويق", price: 1500 },
+    { name: "استراتيجية السوشيال ميديا", category: "تسويق", price: 1500 },
+    { name: "تحليل المنافسين", category: "تسويق", price: 1000 },
+    { name: "تحليل الصفحة", category: "تسويق", price: 1000 },
+    { name: "تحليل المحتوى", category: "تسويق", price: 1500 },
+    { name: "تحليل الجمهور المستهدف", category: "تسويق", price: 1000 },
+    { name: "استشارة تسويقية", category: "تسويق", price: 1500 },
+    { name: "استراتيجية الحملة التسويقية", category: "تسويق", price: 1000 },
+    { name: "استراتيجية الإعلانات الممولة", category: "تسويق", price: 500 },
+    { name: "استراتيجية المحتوى الإعلاني", category: "تسويق", price: 300 },
+    // إدارة السوشيال ميديا
+    { name: "إدارة صفحة فيسبوك", category: "إدارة", price: 500 },
+    { name: "إدارة صفحة إنستجرام", category: "إدارة", price: 500 },
+    { name: "نشر المحتوى", category: "إدارة", price: 500 },
+    { name: "جدولة المحتوى", category: "إدارة", price: 500 },
+    { name: "كتابة أوصاف المنشورات", category: "إدارة", price: 1000 },
+    { name: "إعداد خطة المحتوى الشهرية", category: "إدارة", price: 1000 },
+    { name: "إدارة السوشيال ميديا الشهرية (تبدأ من)", category: "إدارة", price: 2000 },
+    // الإعلانات الممولة
+    { name: "إعداد الحملة الإعلانية", category: "إعلانات", price: 300 },
+    { name: "استراتيجية الإعلانات", category: "إعلانات", price: 500 },
+    { name: "تصميم الإعلان (يبدأ من)", category: "إعلانات", price: 400 },
+    { name: "تجهيز وإعداد الإعلان (نسبة)", category: "إعلانات", price: 0 },
+    // الهوية البصرية والبراندينج
+    { name: "تصميم هوية بصرية", category: "هوية", price: 1500 },
+    { name: "تصميم شعار", category: "هوية", price: 800 },
+    { name: "دليل الهوية البصرية", category: "هوية", price: 500 },
+    { name: "تحديد الألوان", category: "هوية", price: 500 },
+    { name: "اختيار الخطوط", category: "هوية", price: 1000 },
+    { name: "هوية السوشيال ميديا", category: "هوية", price: 1500 },
+    { name: "تصميم المطبوعات الأساسية", category: "هوية", price: 1000 },
+    { name: "عرض وتقديم الهوية", category: "هوية", price: 1500 },
+    { name: "استراتيجية البراند", category: "هوية", price: 1000 },
+    { name: "Branding كامل (يبدأ من)", category: "هوية", price: 9000 },
+    // التصميمات والمطبوعات
+    { name: "كارت شخصي / بيزنس كارد", category: "مطبوعات", price: 150 },
+    { name: "بروشور", category: "مطبوعات", price: 300 },
+    { name: "منيو", category: "مطبوعات", price: 600 },
+    { name: "بوستر", category: "مطبوعات", price: 200 },
+    { name: "بانر", category: "مطبوعات", price: 250 },
+    { name: "كتيب", category: "مطبوعات", price: 300 },
+    { name: "دعوة", category: "مطبوعات", price: 150 },
+    { name: "تصميم عبوة / تغليف", category: "مطبوعات", price: 600 },
+    // التصميم التعليمي
+    { name: "تصميم صفحة مذكرة", category: "تعليمي", price: 10 },
+    { name: "تصميم صفحة كتاب شرح", category: "تعليمي", price: 15 },
+    { name: "تصميم صفحة بنك أسئلة", category: "تعليمي", price: 15 },
+    { name: "تصميم غلاف كتاب", category: "تعليمي", price: 300 },
+    { name: "تصميم جدول مواعيد", category: "تعليمي", price: 200 },
+    { name: "هوية مدرس / Teacher Branding", category: "تعليمي", price: 1000 },
+    // الباقات الشهرية
+    { name: "باقة STARTER", category: "باقات", price: 2500 },
+    { name: "باقة GROWTH", category: "باقات", price: 5000 },
+    { name: "باقة PROFESSIONAL", category: "باقات", price: 8000 },
+    { name: "باقة PREMIUM", category: "باقات", price: 9000 },
+    { name: "باقة FULL MARKETING", category: "باقات", price: 12000 },
+    { name: "باقة TEACHER PACKAGE", category: "باقات", price: 14000 },
+    { name: "باقة BUSINESS PACKAGE", category: "باقات", price: 20000 }
+  ];
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -120,6 +216,30 @@ export default function App() {
 
   const handleLogout = async () => {
     await signOut(auth);
+  };
+
+  // دالة الرفع الجماعي للأسعار
+  const handleBulkUpload = async () => {
+    if (!window.confirm("هل أنت متأكد من رفع جميع أسعار Viola Elprimo دفعة واحدة؟ (سيتم تجاهل الخدمات الموجودة مسبقاً لمنع التكرار)")) return;
+    
+    let addedCount = 0;
+    for (const item of bulkServicesList) {
+      const exists = services.find((s) => s.name === item.name);
+      if (!exists) {
+        try {
+          await addDoc(collection(db, "services"), {
+            name: item.name,
+            category: item.category,
+            price: Number(item.price),
+          });
+          addedCount++;
+        } catch (error) {
+          console.error("Error adding doc: ", error);
+        }
+      }
+    }
+    alert(`تمت العملية بنجاح! تمت إضافة ${addedCount} خدمة جديدة.`);
+    window.location.reload(); 
   };
 
   // ---------------- إدارة العملاء ----------------
@@ -256,7 +376,7 @@ export default function App() {
           price: Number(newService.price),
         },
       ]);
-      setNewService({ name: "", category: "تصميم", price: "" });
+      setNewService({ name: "", category: "سوشيال", price: "" });
     } catch (error) {}
   };
   const handleDeleteService = async (id) => {
@@ -985,11 +1105,16 @@ export default function App() {
                       setNewService({ ...newService, category: e.target.value })
                     }
                   >
-                    <option value="تصميم">01 - التصميم والهوية</option>
-                    <option value="سوشيال">02 - إدارة السوشيال ميديا</option>
-                    <option value="محتوى">03 - صناعة المحتوى</option>
-                    <option value="فيديو">04 - مونتاج وفيديو</option>
-                    <option value="إعلانات">05 - إعلانات ممولة</option>
+                    <option value="سوشيال">سوشيال ميديا</option>
+                    <option value="فيديو">المونتاج والفيديو</option>
+                    <option value="محتوى">صناعة المحتوى</option>
+                    <option value="تسويق">التسويق</option>
+                    <option value="إدارة">إدارة الصفحات</option>
+                    <option value="إعلانات">إعلانات ممولة</option>
+                    <option value="هوية">الهوية البصرية</option>
+                    <option value="مطبوعات">المطبوعات</option>
+                    <option value="تعليمي">التصميم التعليمي</option>
+                    <option value="باقات">الباقات الشهرية</option>
                     <option value="أخرى">أخرى</option>
                   </select>
                   <input
@@ -1012,8 +1137,20 @@ export default function App() {
               </div>
             )}
 
+            {/* الزرار السحري لرفع القائمة كاملة */}
+            {isAdmin && (
+              <div className="mb-6 flex justify-end">
+                <button
+                  onClick={handleBulkUpload}
+                  className="bg-[#90BE6D] hover:bg-green-600 text-[#121212] font-bold py-2 px-4 rounded-lg shadow-lg flex items-center gap-2 transition"
+                >
+                  <Plus size={18} /> رفع قائمة خدمات Viola Elprimo (بضغطة واحدة)
+                </button>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full">
-              {["تصميم", "سوشيال", "محتوى", "فيديو", "إعلانات", "أخرى"].map(
+              {["سوشيال", "فيديو", "محتوى", "تسويق", "إدارة", "إعلانات", "هوية", "مطبوعات", "تعليمي", "باقات", "أخرى"].map(
                 (cat) => {
                   const catServices = services.filter(
                     (s) => s.category === cat
