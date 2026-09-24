@@ -8,16 +8,14 @@ import {
   Trash2,
   Edit,
   Search,
-  CheckCircle,
-  Clock,
-  XCircle,
-  UserPlus,
   MessageCircle,
   Receipt,
   LogOut,
   Lock,
   Menu,
-  X
+  X,
+  UserPlus,
+  XCircle
 } from "lucide-react";
 import { db, auth } from "./firebase";
 import {
@@ -75,7 +73,6 @@ export default function App() {
 
   // قائمة أسعار Viola Elprimo كاملة للرفع بضغطة واحدة
   const bulkServicesList = [
-    // سوشيال ميديا
     { name: "تصميم بوست سوشيال ميديا", category: "سوشيال", price: 250 },
     { name: "تصميم كاروسيل", category: "سوشيال", price: 400 },
     { name: "تصميم إنفوجرافيك", category: "سوشيال", price: 350 },
@@ -87,7 +84,6 @@ export default function App() {
     { name: "تصميم غلاف ريلز", category: "سوشيال", price: 150 },
     { name: "تصميم صورة مصغرة", category: "سوشيال", price: 200 },
     { name: "تصميم بوستات المناسبات والأعياد", category: "سوشيال", price: 200 },
-    // المونتاج والفيديو
     { name: "مونتاج ريلز", category: "فيديو", price: 250 },
     { name: "مونتاج فيديو طويل (للدقيقة)", category: "فيديو", price: 50 },
     { name: "مونتاج فيديو تعليمي", category: "فيديو", price: 300 },
@@ -97,7 +93,6 @@ export default function App() {
     { name: "تصميم ومعالجة الصوت", category: "فيديو", price: 250 },
     { name: "صناعة محتوى قصير", category: "فيديو", price: 300 },
     { name: "تحويل فيديو طويل إلى ريلز", category: "فيديو", price: 250 },
-    // كتابة وصناعة المحتوى
     { name: "كتابة محتوى", category: "محتوى", price: 150 },
     { name: "كتابة وصف للمنشور", category: "محتوى", price: 50 },
     { name: "كتابة محتوى إعلاني", category: "محتوى", price: 200 },
@@ -108,7 +103,6 @@ export default function App() {
     { name: "الأفكار الإبداعية للحملات والمحتوى", category: "محتوى", price: 1000 },
     { name: "كتابة الأفكار والخطافات الإعلانية", category: "محتوى", price: 1000 },
     { name: "كتابة سيناريو ريلز", category: "محتوى", price: 200 },
-    // التسويق والاستراتيجيات
     { name: "استراتيجية تسويقية", category: "تسويق", price: 1500 },
     { name: "استراتيجية السوشيال ميديا", category: "تسويق", price: 1500 },
     { name: "تحليل المنافسين", category: "تسويق", price: 1000 },
@@ -119,7 +113,6 @@ export default function App() {
     { name: "استراتيجية الحملة التسويقية", category: "تسويق", price: 1000 },
     { name: "استراتيجية الإعلانات الممولة", category: "تسويق", price: 500 },
     { name: "استراتيجية المحتوى الإعلاني", category: "تسويق", price: 300 },
-    // إدارة السوشيال ميديا
     { name: "إدارة صفحة فيسبوك", category: "إدارة", price: 500 },
     { name: "إدارة صفحة إنستجرام", category: "إدارة", price: 500 },
     { name: "نشر المحتوى", category: "إدارة", price: 500 },
@@ -127,12 +120,9 @@ export default function App() {
     { name: "كتابة أوصاف المنشورات", category: "إدارة", price: 1000 },
     { name: "إعداد خطة المحتوى الشهرية", category: "إدارة", price: 1000 },
     { name: "إدارة السوشيال ميديا الشهرية (تبدأ من)", category: "إدارة", price: 2000 },
-    // الإعلانات الممولة
     { name: "إعداد الحملة الإعلانية", category: "إعلانات", price: 300 },
     { name: "استراتيجية الإعلانات", category: "إعلانات", price: 500 },
     { name: "تصميم الإعلان (يبدأ من)", category: "إعلانات", price: 400 },
-    { name: "تجهيز وإعداد الإعلان (نسبة)", category: "إعلانات", price: 0 },
-    // الهوية البصرية والبراندينج
     { name: "تصميم هوية بصرية", category: "هوية", price: 1500 },
     { name: "تصميم شعار", category: "هوية", price: 800 },
     { name: "دليل الهوية البصرية", category: "هوية", price: 500 },
@@ -143,7 +133,6 @@ export default function App() {
     { name: "عرض وتقديم الهوية", category: "هوية", price: 1500 },
     { name: "استراتيجية البراند", category: "هوية", price: 1000 },
     { name: "Branding كامل (يبدأ من)", category: "هوية", price: 9000 },
-    // التصميمات والمطبوعات
     { name: "كارت شخصي / بيزنس كارد", category: "مطبوعات", price: 150 },
     { name: "بروشور", category: "مطبوعات", price: 300 },
     { name: "منيو", category: "مطبوعات", price: 600 },
@@ -152,14 +141,12 @@ export default function App() {
     { name: "كتيب", category: "مطبوعات", price: 300 },
     { name: "دعوة", category: "مطبوعات", price: 150 },
     { name: "تصميم عبوة / تغليف", category: "مطبوعات", price: 600 },
-    // التصميم التعليمي
     { name: "تصميم صفحة مذكرة", category: "تعليمي", price: 10 },
     { name: "تصميم صفحة كتاب شرح", category: "تعليمي", price: 15 },
     { name: "تصميم صفحة بنك أسئلة", category: "تعليمي", price: 15 },
     { name: "تصميم غلاف كتاب", category: "تعليمي", price: 300 },
     { name: "تصميم جدول مواعيد", category: "تعليمي", price: 200 },
     { name: "هوية مدرس / Teacher Branding", category: "تعليمي", price: 1000 },
-    // الباقات الشهرية
     { name: "باقة STARTER", category: "باقات", price: 2500 },
     { name: "باقة GROWTH", category: "باقات", price: 5000 },
     { name: "باقة PROFESSIONAL", category: "باقات", price: 8000 },
@@ -218,9 +205,8 @@ export default function App() {
     await signOut(auth);
   };
 
-  // دالة الرفع الجماعي للأسعار
   const handleBulkUpload = async () => {
-    if (!window.confirm("هل أنت متأكد من رفع جميع أسعار Viola Elprimo دفعة واحدة؟ (سيتم تجاهل الخدمات الموجودة مسبقاً لمنع التكرار)")) return;
+    if (!window.confirm("هل أنت متأكد من رفع جميع أسعار Viola Elprimo دفعة واحدة؟")) return;
     
     let addedCount = 0;
     for (const item of bulkServicesList) {
@@ -240,6 +226,35 @@ export default function App() {
     }
     alert(`تمت العملية بنجاح! تمت إضافة ${addedCount} خدمة جديدة.`);
     window.location.reload(); 
+  };
+
+  // دالة الذكاء لفتح الواتساب بشكل صحيح
+  const openWhatsApp = (client) => {
+    if (!client.phone) {
+      alert("لا يوجد رقم مسجل لهذا العميل.");
+      return;
+    }
+    // تنظيف الرقم من أي مسافات أو رموز
+    let cleanPhone = client.phone.replace(/[\s+]/g, '');
+    
+    // لو الرقم بيبدأ بصفر (زي 010 أو 011)، شيل الصفر
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = cleanPhone.substring(1);
+    }
+    
+    // إضافة كود مصر لو مش موجود
+    if (!cleanPhone.startsWith('20')) {
+      cleanPhone = '20' + cleanPhone;
+    }
+
+    const remaining = (client.total || 0) - (client.paid || 0);
+    const message = `مرحباً ${client.name}،\nمتبقي لحساب شركة Viola Elprimo مبلغ وقدره ${remaining} ج.م.\nبرجاء مراجعة الحساب، شكراً لتعاونكم.`;
+    
+    // تشفير الرسالة عشان المتصفح والواتساب يقرأ العربي صح
+    const encodedMessage = encodeURIComponent(message);
+    const waUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+    
+    window.open(waUrl, '_blank');
   };
 
   // ---------------- إدارة العملاء ----------------
@@ -535,7 +550,7 @@ export default function App() {
               activeTab === "clients"
                 ? "bg-[#3A0CA3] shadow-lg"
                 : "hover:bg-white/5"
-            }`}
+            } mt-2`}
           >
             <Users size={20} /> <span>العملاء والمشاريع</span>
           </button>
@@ -664,7 +679,7 @@ export default function App() {
                   </div>
                   <div>
                     <label className="block text-xs md:text-sm text-gray-300 mb-1 md:mb-2">
-                      رقم الواتساب
+                      رقم الواتساب (مثال: 01012345678)
                     </label>
                     <input
                       type="text"
@@ -680,7 +695,7 @@ export default function App() {
 
                 <div className="bg-white/5 p-4 md:p-5 rounded-xl border border-white/10">
                   <label className="block text-xs md:text-sm text-[#4CC9F0] font-bold mb-2 md:mb-3">
-                    الخدمات المطلوبة (تُضاف للإجمالي تلقائياً)
+                    الخدمات المطلوبة (اختر من القوائم المنسدلة)
                   </label>
                   <select
                     className="w-full glass-input p-2.5 md:p-3 rounded-xl text-white bg-[#121212] cursor-pointer text-sm md:text-base"
@@ -704,12 +719,20 @@ export default function App() {
                       }
                     }}
                   >
-                    <option value="">+ اضغط هنا لاختيار وإضافة خدمة...</option>
-                    {services.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.name} ({s.price} ج.م)
-                      </option>
-                    ))}
+                    <option value="">+ اضغط هنا لفتح قوائم الخدمات واختيار خدمة...</option>
+                    {["سوشيال", "فيديو", "محتوى", "تسويق", "إدارة", "إعلانات", "هوية", "مطبوعات", "تعليمي", "باقات", "أخرى"].map(cat => {
+                      const catServices = services.filter(s => s.category === cat);
+                      if (catServices.length === 0) return null;
+                      return (
+                        <optgroup key={cat} label={`--- ${cat} ---`} className="text-[#4CC9F0] font-bold bg-[#121212]">
+                          {catServices.map(s => (
+                            <option key={s.id} value={s.id} className="text-white font-normal">
+                              {s.name} ({s.price} ج.م)
+                            </option>
+                          ))}
+                        </optgroup>
+                      )
+                    })}
                   </select>
                   {newClient.selectedServices &&
                     newClient.selectedServices.length > 0 && (
@@ -891,7 +914,7 @@ export default function App() {
               </div>
             )}
 
-            {/* جدول العملاء - متجاوب بالتمرير الأفقي */}
+            {/* جدول العملاء */}
             <div className="glass-panel rounded-2xl overflow-hidden w-full">
                <div className="overflow-x-auto w-full">
                   <table className="w-full text-right min-w-[700px] md:min-w-[800px]">
@@ -959,23 +982,13 @@ export default function App() {
                             </td>
                           )}
                           <td className="p-3 md:p-4 flex gap-1 md:gap-2 justify-center">
-                            {client.phone && (
-                              <a
-                                href={`https://wa.me/20${
-                                  client.phone
-                                }?text=مرحباً ${
-                                  client.name
-                                }، متبقي لحساب شركة Viola Elprimo مبلغ وقدره ${
-                                  client.total - client.paid
-                                } ج.م`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="p-1.5 md:p-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/40"
-                                title="إرسال واتساب"
-                              >
-                                <MessageCircle size={14} className="md:w-4 md:h-4" />
-                              </a>
-                            )}
+                            <button
+                              onClick={() => openWhatsApp(client)}
+                              className="p-1.5 md:p-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/40 transition cursor-pointer"
+                              title="إرسال واتساب للعميل"
+                            >
+                              <MessageCircle size={14} className="md:w-4 md:h-4" />
+                            </button>
                             {isAdmin && (
                               <>
                                 <button
