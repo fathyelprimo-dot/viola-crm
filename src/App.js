@@ -228,16 +228,17 @@ export default function App() {
     window.location.reload(); 
   };
 
-  // دالة الذكاء لفتح الواتساب بشكل صحيح
+  // دالة فتح الواتساب الرسمية المباشرة
   const openWhatsApp = (client) => {
     if (!client.phone) {
       alert("لا يوجد رقم مسجل لهذا العميل.");
       return;
     }
-    // تنظيف الرقم من أي مسافات أو رموز
-    let cleanPhone = client.phone.replace(/[\s+]/g, '');
     
-    // لو الرقم بيبدأ بصفر (زي 010 أو 011)، شيل الصفر
+    // تنظيف الرقم من المسافات وأي رموز غير رقمية
+    let cleanPhone = client.phone.replace(/\D/g, '');
+    
+    // لو الرقم بيبدأ بصفر، شيل الصفر
     if (cleanPhone.startsWith('0')) {
       cleanPhone = cleanPhone.substring(1);
     }
@@ -250,9 +251,11 @@ export default function App() {
     const remaining = (client.total || 0) - (client.paid || 0);
     const message = `مرحباً ${client.name}،\nمتبقي لحساب شركة Viola Elprimo مبلغ وقدره ${remaining} ج.م.\nبرجاء مراجعة الحساب، شكراً لتعاونكم.`;
     
-    // تشفير الرسالة عشان المتصفح والواتساب يقرأ العربي صح
+    // تشفير الرسالة
     const encodedMessage = encodeURIComponent(message);
-    const waUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+    
+    // استخدام رابط API المباشر لتجنب إيرور 404
+    const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodedMessage}`;
     
     window.open(waUrl, '_blank');
   };
@@ -914,7 +917,7 @@ export default function App() {
               </div>
             )}
 
-            {/* جدول العملاء */}
+            {/* جدول العملاء - متجاوب بالتمرير الأفقي */}
             <div className="glass-panel rounded-2xl overflow-hidden w-full">
                <div className="overflow-x-auto w-full">
                   <table className="w-full text-right min-w-[700px] md:min-w-[800px]">
